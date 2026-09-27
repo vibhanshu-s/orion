@@ -1,0 +1,12 @@
+.env
+node_modules/
+dist/
+data/
+*.tsbuildinfo
+.build/
+.codex-finalizer/
+deliverables/*.zip
+*.log
+deliverables/ORION-contest*.pptx
+docs/
+deliverables/

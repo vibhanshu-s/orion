@@ -1,0 +1,14 @@
+import { z } from 'zod';
+export const toolName = z.enum(['web_search','python','files','api_get','memory_search']);
+export const workflowStep = z.object({ objective:z.string().min(1).max(500), suggestedTool:toolName, expectedResult:z.string().min(1).max(500) });
+export const taskAnalysis = z.object({ goal:z.string().min(1), constraints:z.array(z.string()), requiredInformation:z.array(z.string()), expectedOutput:z.string() });
+export const workflowPlan = z.object({ TASK_ANALYSIS:taskAnalysis, WORKFLOW_PLAN:z.array(workflowStep).min(1).max(8) });
+export const specialistName = z.enum(['Evidence Analyst','Domain Expert','Skeptic']);
+export const subagentDirective = z.object({ name:specialistName, directive:z.string().min(8).max(300) });
+export const actionDecision = z.object({ action:z.string(), reason:z.string(), tool:toolName, expected_output:z.string(), subagents:z.array(subagentDirective).min(2).max(3) });
+export const evaluatorResponse = z.object({ goal_coverage:z.boolean(), factual_support:z.boolean(), source_reliability:z.boolean(), calculation_evidence:z.boolean(), completeness:z.boolean(), gaps:z.array(z.string()).max(12) });
+export const qualityScore = z.object({ score:z.number().int().min(0).max(100), checks:z.object({ goal_coverage:z.boolean(), factual_support:z.boolean(), source_reliability:z.boolean(), calculation_evidence:z.boolean(), completeness:z.boolean() }), gaps:z.array(z.string()).max(12), estimate:z.literal(true) });
+export const currentState = z.object({ completed_steps:z.array(z.string()), remaining_steps:z.array(z.string()), knowledge:z.array(z.unknown()), errors:z.array(z.string()) });
+export const finalOutput = z.object({ summary:z.string(), completed_actions:z.array(z.string()), important_results:z.array(z.string()), limitations:z.array(z.string()), next_possible_actions:z.array(z.string()) });
+export type WorkflowStep = z.infer<typeof workflowStep>;
+export type TaskState = 'queued'|'analyzing'|'planning'|'running'|'waiting_for_clarification'|'evaluating'|'completed'|'partial'|'failed'|'cancelled'|'interrupted';
